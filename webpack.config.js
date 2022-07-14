@@ -7,23 +7,30 @@ module.exports = {
 
     output: {
         path: path.resolve(__dirname, 'dist'),
-        publicPath: '/dist/',
+        // publicPath: '/dist/',
         filename: 'bundle.js'
     },
 
     devtool: 'eval-source-map',
 
     devServer: {
+        host: 'localhost',
+        port: 8080,
+
         static: {
             directory: path.resolve(__dirname, 'dist'),
             publicPath: '/'
         },
+
         proxy: {
-          '/api': 'http://localhost:3000'
+          '/api':  {
+            target: 'http://localhost:3000/',
+            secure: false,
+          }
         },
         compress: true,
-        port: 8080,
-        hot: true
+        historyApiFallback: true,
+        hot: true,
       },
 
     module: {
@@ -36,22 +43,19 @@ module.exports = {
                     options: {
                         presets: ['@babel/preset-env', '@babel/preset-react']
                     }
-                }
+                },
+            },
+
+            {
+                test: /\.css$/,
+                use: [{loader: 'style-loader'}, {loader: 'css-loader'}]
             }
         ]
     },
 
-    devServer: {
-        static: {
-            publicPath: '/',
-            directory: path.resolve(__dirname)
-        }
-    },
-
     plugins: [
         new HtmlWebpackPlugin({
-            title: 'Development',
-            template: path.resolve(__dirname, './index.html'),
+            template: path.resolve(__dirname, '/index.html'),
             filename: 'index.html'
         })
     ]
